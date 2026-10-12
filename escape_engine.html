@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover">
+<title>FÁBRICA 09 — The Gravity Engine</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:#090f19;color:#dde8f2;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif}button{font:inherit;cursor:pointer}#game{max-width:1060px;margin:auto;padding:12px}.top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.eyebrow{color:#66d9bd;letter-spacing:.18em;font-size:10px;font-weight:800}.top h1{font-size:clamp(19px,3vw,30px);margin:2px 0 5px;letter-spacing:.07em}.small{font-size:12px;color:#99acbf}.pills{display:flex;gap:6px;flex-wrap:wrap}.pill{border:1px solid #37465b;background:#172335;padding:6px 10px;border-radius:6px;font:600 11px/1.3 ui-monospace,SFMono-Regular,monospace;color:#b1c0cb}.pill.on{color:#72f1c6;border-color:#276b5e;background:#123b36}.pill.warn{color:#ffbb6c}.viewport{height:clamp(345px,55vw,560px);position:relative;background:radial-gradient(circle at 50% 15%,#1b2d48,#0b1423 65%);border-radius:12px;border:1px solid #33435a;overflow:hidden;touch-action:none;margin-top:10px}.viewport canvas{display:block;width:100%;height:100%}.hud{position:absolute;left:12px;top:10px;pointer-events:none;background:#07121eb9;padding:9px 11px;border-radius:7px;font:600 11px/1.65 ui-monospace,monospace;white-space:pre-line;color:#cbd9e3;max-width:58%}.hud b{color:#85e6cd}.alert{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:#081525e8;border:1px solid #39536a;border-radius:7px;padding:8px 12px;text-align:center;font-size:12px;max-width:94%;pointer-events:none}.hud-right{position:absolute;top:11px;right:11px;font:700 11px ui-monospace,monospace;color:#b2c5d5;background:#07121ebd;padding:7px 10px;border-radius:6px;pointer-events:none}.bottom{display:grid;grid-template-columns:minmax(125px,1fr) 2fr;gap:10px;margin-top:10px}.panel{border:1px solid #334258;background:#121e2f;border-radius:11px;padding:12px}.control{display:flex;gap:7px;flex-wrap:wrap}.control button{min-height:42px;flex:1;border:1px solid #50677b;border-radius:8px;background:#20344a;color:#f4f8ff;font-size:12px;font-weight:700;padding:8px 10px}.control button:active,.control button.pressed{background:#39716c;transform:translateY(1px)}.control button.hot{background:#185146;border-color:#3da88e}.klabel{font-size:11px;color:#8ea5b8;letter-spacing:.07em;font-weight:700;margin:0 0 8px}.explain{font-size:12px;color:#b7c6d5;line-height:1.5;margin:9px 0 0}.bar{height:6px;border-radius:5px;background:#344255;overflow:hidden;margin-top:9px}.fill{height:100%;background:linear-gradient(90deg,#eb966b,#71ddc1);width:100%}.joy{width:116px;height:116px;border-radius:50%;border:1px solid #536779;background:radial-gradient(circle,#263a52 0%,#17283e 66%,#111e2e 100%);position:relative;touch-action:none;user-select:none;margin:2px auto}.joy:before,.joy:after{content:'';position:absolute;opacity:.3;background:#8da5bd}.joy:before{top:50%;left:12px;right:12px;height:1px}.joy:after{left:50%;top:12px;bottom:12px;width:1px}.knob{position:absolute;width:43px;height:43px;left:36px;top:36px;border-radius:50%;background:linear-gradient(135deg,#adc3d4,#637f99);box-shadow:0 3px 12px #06101ad9;pointer-events:none}.touchhint{text-align:center;color:#8196a9;font-size:10px;margin-top:4px}.footer{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;font-size:11px;color:#7f92a6}.footer button{border:0;background:none;color:#8ac6d9;font-size:11px;padding:4px}.win{display:none;position:absolute;inset:0;background:#06121cee;align-items:center;justify-content:center;flex-direction:column;text-align:center;z-index:5;padding:20px}.win h2{font-size:clamp(22px,5vw,40px);color:#a0f4d9;margin:5px 0}.win p{max-width:420px;color:#d0dfe9;font-size:14px;line-height:1.5}.win button{background:#1e6658;color:#f3fff8;border:1px solid #4cb99a;border-radius:8px;padding:12px 22px;font-weight:700}.error{padding:20px;color:#e3aaa0} .keys{display:inline-block;border:1px solid #5e7080;padding:1px 5px;border-radius:4px;font:11px ui-monospace,monospace;color:#cad8e3}
+@media(max-width:600px){#game{padding:7px}.viewport{height:360px}.bottom{grid-template-columns:130px 1fr}.panel{padding:9px}.control{gap:6px}.control button{min-height:44px;padding:6px;font-size:11px}.pills{width:100%}.hud{font-size:10px;max-width:67%}.small{font-size:11px}.footer{font-size:10px}.touchhint{font-size:10px}}
+</style>
+</head>
+<body>
+<div id="game">
+ <div class="top"><div><div class="eyebrow">ESCAPE ROOM · FÍSICA 3D · EXPERTO</div><h1>FÁBRICA 09 <span style="color:#6ba6a6">/</span> MOTOR DE GRAVEDAD</h1><div class="small">La máquina está bloqueada. Solo la esfera de latón puede activar la salida.</div></div><div class="pills"><span class="pill" id="pA">01 · RETENCIÓN</span><span class="pill" id="pB">02 · PASARELA</span><span class="pill" id="pC">03 · DESCARGA</span></div></div>
+ <div class="viewport" id="viewport"><div id="hud" class="hud">INICIALIZANDO MOTOR...</div><div id="rightHud" class="hud-right">00:00 · CAÍDAS 0</div><div id="alert" class="alert">Cargando simulación 3D...</div><div id="win" class="win"><div class="eyebrow">SISTEMA DESBLOQUEADO</div><h2>ESCAPE COMPLETADO</h2><p id="winData"></p><button id="again">Reiniciar máquina</button></div></div>
+ <div class="bottom"><div class="panel"><p class="klabel">INCLINACIÓN DEL TABLERO</p><div id="joy" class="joy"><div id="knob" class="knob"></div></div><div class="touchhint">Arrastra · o usa WASD / flechas</div></div><div class="panel"><p class="klabel">MANDOS DE LA MÁQUINA</p><div class="control"><button id="magnet">E · IMÁN</button><button id="bridge">R · PUENTE</button><button id="brake" class="hot">ESPACIO · FRENO</button><button id="view">V · CÁMARA</button></div><div class="bar"><div class="fill" id="brakefill"></div></div><p class="explain">Acero <b style="color:#b8d7e6">●</b> activa la retención. Latón <b style="color:#dca858">●</b> debe llegar al receptor. La retención exige contacto; el puente tiene inercia mecánica. Usa el freno para maniobras delicadas.</p></div></div>
+ <div class="footer"><span>Simulación con gravedad, inercia, rebotes y colisiones. Las bolas no tienen movimiento programado.</span><div><button id="hint">¿Pista?</button><button id="restart">↻ Reiniciar</button></div></div>
+</div>
+<script type="module">
+const $=s=>document.querySelector(s);
+const vp=$('#viewport'),alertBox=$('#alert'),hud=$('#hud'),rightHud=$('#rightHud');
+let THREE;
+try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js')}
+catch(e){try{THREE=await import('https://cdnjs.cloudflare.com/ajax/libs/three.js/0.164.1/three.module.js')}catch(err){alertBox.textContent='No se ha podido cargar Three.js. Comprueba la conexión e inténtalo en un navegador actualizado.';throw err}}
+let renderer;
+try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});}catch(err){alertBox.textContent='Este dispositivo no admite WebGL para ejecutar el juego.';throw err}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.55;
+vp.prepend(renderer.domElement);
+const scene=new THREE.Scene();scene.fog=new THREE.Fog(0x0b1423,19,33);
+const camera=new THREE.OrthographicCamera(-6,6,6,-6,.1,90);
+const board=new THREE.Group();scene.add(board);
+const ambient=new THREE.HemisphereLight(0xaed2ff,0x2d3245,2.3);scene.add(ambient);
+const sun=new THREE.DirectionalLight(0xffe3be,2.9);sun.position.set(-3,12,7);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-9;sun.shadow.camera.right=9;sun.shadow.camera.top=9;sun.shadow.camera.bottom=-9;sun.shadow.bias=-.0003;scene.add(sun);
+function mat(color,metal=.15,rough=.58,extra={}){return new THREE.MeshStandardMaterial({color,metalness:metal,roughness:rough,...extra})}
+const metal=mat(0x62778a,.83,.32),chrome=mat(0xa6bcc8,.85,.22),wallmat=mat(0x33475b,.72,.37),gold=mat(0xe0a34e,.85,.19),steelMat=mat(0x9dc4d7,.92,.14),coreMat=mat(0x192a3b,.2,.78), pitMat=mat(0x060c12,.05,.9),green=mat(0x2db48a,.4,.32,{emissive:0x0b5c43,emissiveIntensity:.5}),red=mat(0xd45852,.4,.3,{emissive:0x562321,emissiveIntensity:.48}),blue=mat(0x5fa9c8,.35,.37,{emissive:0x0c4863,emissiveIntensity:.35});
+function box(w,h,d,x,y,z,m,parent=board){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.receiveShadow=o.castShadow=true;parent.add(o);return o}
+function cyl(r,depth,x,y,z,m,parent=board,n=32){const o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,depth,n),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o}
+function torus(r,t,x,y,z,m){const o=new THREE.Mesh(new THREE.TorusGeometry(r,t,9,48),m);o.rotation.x=Math.PI/2;o.position.set(x,y,z);board.add(o);return o}
+function label(t,x,z,color='#d1e1ed',size=45){const c=document.createElement('canvas');c.width=512;c.height=96;const ctx=c.getContext('2d');ctx.font=`800 ${size}px system-ui`;ctx.fillStyle=color;ctx.textAlign='center';ctx.fillText(t,256,64);const tx=new THREE.CanvasTexture(c);tx.colorSpace=THREE.SRGBColorSpace;const m=new THREE.MeshBasicMaterial({map:tx,transparent:true,depthWrite:false});const o=new THREE.Mesh(new THREE.PlaneGeometry(1.65,.32),m);o.rotation.x=-Math.PI/2;o.position.set(x,.118,z);board.add(o);return o}
+box(4.17,.52,8.1,-3.335,-.36,0,metal);box(4.17,.52,8.1,3.335,-.36,0,metal);box(2.5,.52,3.03,0,-.36,-2.535,metal);box(2.5,.52,3.03,0,-.36,2.535,metal);box(4.02,.13,7.8,-3.29,-.025,0,coreMat);box(4.02,.13,7.8,3.29,-.025,0,coreMat);box(2.56,.13,2.86,0,-.025,-2.47,coreMat);box(2.56,.13,2.86,0,-.025,2.47,coreMat);
+for(let x=-4.8;x<=4.9;x+=.55){if(Math.abs(x)<1.28){box(.015,.006,2.7,x,.047,2.51,mat(0x314256,0,.95));box(.015,.006,2.7,x,.047,-2.51,mat(0x314256,0,.95))}else box(.015,.006,7.55,x,.047,0,mat(0x314256,0,.95))}
+for(let z=-3.3;z<=3.3;z+=.55){if(Math.abs(z)<1.04){box(3.98,.006,.014,-3.3,.05,z,mat(0x314256,0,.95));box(3.98,.006,.014,3.3,.05,z,mat(0x314256,0,.95))}else box(10.4,.006,.014,0,.05,z,mat(0x314256,0,.95))}
+const pit=box(2.52,.08,2.00,0,-.66,0,pitMat);box(.06,.55,2.04,-1.28,-.345,0,wallmat);box(.06,.55,2.04,1.28,-.345,0,wallmat);box(2.5,.55,.06,0,-.345,-1.03,wallmat);box(2.5,.55,.06,0,-.345,1.03,wallmat);box(2.64,.06,.07,0,.035,-1.04,chrome);box(2.64,.06,.07,0,.035,1.04,chrome);
+for(let xx of [-1.25,1.25]){box(.05,.09,2.0,xx,.02,0,metal)}
+for(let xx of [-5.25,5.25]) box(.17,.58,8.0,xx,.26,0,metal);
+for(let zz of [-3.85,3.85]) box(10.6,.58,.17,0,.26,zz,metal);
+// Physical wall segments are defined in board coordinates, independent of visuals.
+const walls=[];
+function wall(x1,z1,x2,z2,r=.13,h=.43,m=wallmat){walls.push({x1,z1,x2,z2,r});const len=Math.hypot(x2-x1,z2-z1);let w=box(len,h,r*2,(x1+x2)/2,h/2+.05,(z1+z2)/2,m);w.rotation.y=-Math.atan2(z2-z1,x2-x1);return w}
+wall(-5.14,-3.72,-5.14,3.72,.12);wall(5.14,-3.72,5.14,3.72,.12);wall(-5.2,-3.72,5.2,-3.72,.12);wall(-5.2,3.72,5.2,3.72,.12);
+wall(-1.82,-3.7,-1.82,-.66,.15);wall(-1.82,.66,-1.82,3.7,.15);
+wall(-1.82,-1.13,2.48,-1.13,.13);wall(-1.82,1.13,2.48,1.13,.13);
+wall(2.48,-3.7,2.48,-.68,.14);wall(2.48,.68,2.48,3.7,.14);
+// Entry funnel obstacle & chamber baffles.
+wall(-4.65,-1.4,-2.85,-1.4,.12,.32,metal);
+wall(3.25,-1.7,3.25,-.68,.13,.32,metal);
+wall(3.25,.68,3.25,1.7,.13,.32,metal);
+const gate1=box(.28,.73,1.33,-1.82,.42,0,red),gate2=box(.28,.73,1.36,2.48,.42,0,red);
+let gateA=false,gateTime=0,bridgeTarget=false,bridgeAngle=Math.PI/2,magnLocked=false,brakeEnergy=100,beacon=false,won=false,falls=0,runTime=0,viewTop=false,tipLevel=0;
+const bridgePivot=new THREE.Group();board.add(bridgePivot);bridgePivot.position.set(0,.04,0);
+const bridgeMesh=box(2.7,.13,.69,0,0,0,metal,bridgePivot);box(2.55,.018,.045,0,.074,-.285,green,bridgePivot);box(2.55,.018,.045,0,.074,.285,green,bridgePivot);
+for(let x=-1.08;x<=1.1;x+=.27)box(.035,.015,.53,x,.077,0,chrome,bridgePivot);
+let spindle=cyl(.31,.2,0,-.01,0,metal);torus(.33,.035,0,.13,0,chrome);
+const spinner=new THREE.Group();spinner.position.set(0,.28,0);board.add(spinner);
+cyl(.13,.3,0,.22,0,chrome);box(1.30,.16,.15,0,.04,0,red,spinner);box(.18,.19,.18,-.63,.04,0,chrome,spinner);box(.18,.19,.18,.63,.04,0,chrome,spinner);
+// Decorative drive wheel near retention clamp.
+function gear(x,z,r,teeth){const g=new THREE.Group();g.position.set(x,.16,z);board.add(g);cyl(r,.17,0,0,0,metal,g,32);cyl(r*.27,.2,0,.04,0,chrome,g);for(let i=0;i<teeth;i++){const a=i*2*Math.PI/teeth;const b=box(.2,.15,.13,Math.cos(a)*r,0,Math.sin(a)*r,chrome,g);b.rotation.y=-a}return g}
+const gear1=gear(-3.1,-2.55,.42,12),gear2=gear(-2.52,-2.65,.22,8);
+const magnetRing=torus(.5,.048,-3.28,.10,.10,blue);const magnetCore=cyl(.36,.045,-3.28,.095,.10,mat(0x154054,.5,.4,{emissive:0x1a637d,emissiveIntensity:.4}));
+for(let i=0;i<4;i++){let a=i*Math.PI/2;cyl(.065,.12,-3.28+Math.cos(a)*.48,.12,.10+Math.sin(a)*.48,chrome)}
+const padB=torus(.43,.05,1.78,.12,0,gold);cyl(.34,.05,1.78,.075,0,mat(0x614122,.4,.5));
+const exit=torus(.48,.07,4.36,.135,0,green);cyl(.38,.06,4.36,.078,0,mat(0x154a3f,.5,.36,{emissive:0x135e48,emissiveIntensity:.35}));
+label('ACERO / IMÁN',-3.3,.94,'#80d8e4',38);label('CARGA',1.70,.8,'#eaca8c',38);label('SALIDA',4.30,.85,'#a9ecd3',40);
+const ballGeometry=new THREE.SphereGeometry(.245,32,24);
+function newBall(kind,x,z,radius,mass,m){const mesh=new THREE.Mesh(ballGeometry,m);mesh.scale.setScalar(radius/.245);mesh.castShadow=true;board.add(mesh);const ring=new THREE.Mesh(new THREE.TorusGeometry(radius*.9,.018,8,40),mat(kind==='steel'?0x95d3e3:0xe2be75,.4,.4));ring.rotation.x=Math.PI/2;mesh.add(ring);return {kind,x,z,vx:0,vz:0,r:radius,mass,mesh,startX:x,startZ:z,spin:0}}
+const heavy=newBall('steel',-4.40,-2.78,.265,2.6,steelMat),light=newBall('brass',-4.35,2.73,.235,1,gold);const balls=[heavy,light];
+const keys=new Set();const joystick={x:0,z:0,active:false};let brakeDown=false,holdBrake=false;
+const toast=(msg)=>{alertBox.textContent=msg};
+function magnet(){if(won)return;if(magnLocked){magnLocked=false;toast('Electroimán liberado. La compuerta volverá a depender del peso.');return}let d=Math.hypot(heavy.x+3.28,heavy.z-.10);if(d<.65){magnLocked=true;heavy.x=-3.28;heavy.z=.10;heavy.vx=heavy.vz=0;toast('ACERO RETENIDO · La compuerta A recibe corriente.')}else toast('IMÁN SIN CARGA · Lleva primero la esfera de acero al anillo azul.')}
+function bridge(){if(won)return;bridgeTarget=!bridgeTarget;toast(bridgeTarget?'Accionando motor: desplegando pasarela...':'Accionando motor: retirando pasarela...')}
+function pressBrake(on){brakeDown=on;$('#brake').classList.toggle('pressed',on)}
+$('#magnet').addEventListener('click',magnet);$('#bridge').addEventListener('click',bridge);$('#view').addEventListener('click',()=>viewTop=!viewTop);
+$('#restart').addEventListener('click',reset);$('#again').addEventListener('click',reset);
+$('#hint').addEventListener('click',()=>{tipLevel=(tipLevel+1)%4;toast(["Sin pista. Observa la geometría de la máquina.","Pista 1/3: el contacto con la placa azul no basta si quieres mover la otra bola sin perderlo.","Pista 2/3: cruzar un foso con una pasarela giratoria exige alinear primero su eje y frenar antes del borde.","Pista 3/3: la placa ámbar no se queda activada: carga un cierre durante unos segundos. Haz el recorrido final sin vacilar."][tipLevel])});
+const brakeButton=$('#brake');brakeButton.addEventListener('pointerdown',e=>{e.preventDefault();brakeButton.setPointerCapture(e.pointerId);pressBrake(true)});for(const ev of ['pointerup','pointercancel','lostpointercapture'])brakeButton.addEventListener(ev,()=>pressBrake(false));
+const joy=$('#joy'),knob=$('#knob');function updateJoy(e){const rect=joy.getBoundingClientRect(),cx=rect.left+rect.width/2,cy=rect.top+rect.height/2;let dx=(e.clientX-cx)/(rect.width*.36),dy=(e.clientY-cy)/(rect.height*.36);const s=Math.max(1,Math.hypot(dx,dy));joystick.x=dx/s;joystick.z=dy/s;knob.style.transform=`translate(${joystick.x*36}px,${joystick.z*36}px)`}
+joy.addEventListener('pointerdown',e=>{e.preventDefault();joystick.active=true;joy.setPointerCapture(e.pointerId);updateJoy(e)});joy.addEventListener('pointermove',e=>{if(joystick.active){e.preventDefault();updateJoy(e)}});function endJoy(){joystick.active=false;joystick.x=joystick.z=0;knob.style.transform='translate(0,0)'};joy.addEventListener('pointerup',endJoy);joy.addEventListener('pointercancel',endJoy);joy.addEventListener('lostpointercapture',endJoy);
+window.addEventListener('keydown',e=>{let k=e.key.toLowerCase();if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright',' ','e','r','v'].includes(k))e.preventDefault();if(e.repeat&&(k==='e'||k==='r'||k==='v'))return;keys.add(k);if(k==='e')magnet();if(k==='r')bridge();if(k==='v')viewTop=!viewTop;if(k===' ')pressBrake(true)});
+window.addEventListener('keyup',e=>{let k=e.key.toLowerCase();keys.delete(k);if(k===' ')pressBrake(false)});window.addEventListener('blur',()=>{keys.clear();pressBrake(false);endJoy()});
+let targetX=0,targetZ=0,tiltX=0,tiltZ=0;
+function reset(){won=false;falls=0;runTime=0;gateTime=0;bridgeAngle=Math.PI/2;bridgeTarget=false;magnLocked=false;brakeEnergy=100;tipLevel=0;targetX=targetZ=tiltX=tiltZ=0;for(const b of balls){b.x=b.startX;b.z=b.startZ;b.vx=b.vz=0}$('#win').style.display='none';toast('Doble esfera inicializada. Descubre cómo mantener abierta la primera compuerta.');}
+function respawn(b){falls++;b.x=b.startX;b.z=b.startZ;b.vx=b.vz=0;if(b===heavy){magnLocked=false}toast(b===heavy?'El acero cayó al foso. Retención desactivada.':'El latón cayó al foso. Recuperación automática en el cargador de origen.')}
+const BOUNCE=.36;
+function collideWall(b,w,movingVx=0,movingVz=0){const dx=w.x2-w.x1,dz=w.z2-w.z1,den=dx*dx+dz*dz||1,t=Math.max(0,Math.min(1,((b.x-w.x1)*dx+(b.z-w.z1)*dz)/den));const px=w.x1+t*dx,pz=w.z1+t*dz;let rx=b.x-px,rz=b.z-pz,dist=Math.hypot(rx,rz),min=b.r+w.r;if(dist>=min)return false;if(dist<.000001){rx=-dz;rz=dx;dist=Math.hypot(rx,rz)||1}const nx=rx/dist,nz=rz/dist;const over=min-dist;b.x+=nx*over;b.z+=nz*over;let vn=(b.vx-movingVx)*nx+(b.vz-movingVz)*nz;if(vn<0){b.vx-=(1+BOUNCE)*vn*nx;b.vz-=(1+BOUNCE)*vn*nz}return true}
+function collideBalls(a,b){let dx=b.x-a.x,dz=b.z-a.z,ds=Math.hypot(dx,dz),min=a.r+b.r;if(ds>=min)return;if(ds<.00001)ds=.00001;const nx=dx/ds,nz=dz/ds,push=(min-ds)/2;if(!magnLocked){a.x-=nx*push;a.z-=nz*push;b.x+=nx*push;b.z+=nz*push}else{b.x+=nx*2*push;b.z+=nz*2*push}const rel=(b.vx-a.vx)*nx+(b.vz-a.vz)*nz;if(rel>=0)return;const invA=magnLocked?0:1/a.mass,invB=1/b.mass,j=-(1+.57)*rel/(invA+invB);if(!magnLocked){a.vx-=j*nx*invA;a.vz-=j*nz*invA}b.vx+=j*nx*invB;b.vz+=j*nz*invB}
+function step(dt){runTime+=dt;const K=(k)=>keys.has(k);targetX=(joystick.x+(K('d')||K('arrowright')?1:0)-(K('a')||K('arrowleft')?1:0));targetZ=(joystick.z+(K('s')||K('arrowdown')?1:0)-(K('w')||K('arrowup')?1:0));let magnitude=Math.max(1,Math.hypot(targetX,targetZ));targetX=targetX/magnitude;targetZ=targetZ/magnitude;tiltX+=(targetX*.21-tiltX)*Math.min(1,dt*6.5);tiltZ+=(targetZ*.21-tiltZ)*Math.min(1,dt*6.5);
+board.rotation.z=-tiltX;board.rotation.x=tiltZ;
+const goalAngle=bridgeTarget?0:Math.PI/2;bridgeAngle+=(goalAngle-bridgeAngle)*Math.min(1,dt*1.5);bridgePivot.rotation.y=bridgeAngle;let brOpen=Math.abs(bridgeAngle)<.16;
+spinner.rotation.y+=dt*1.38;gear1.rotation.y+=dt*.72;gear2.rotation.y-=dt*1.15;
+const onPlate=Math.hypot(heavy.x+3.28,heavy.z-.10)<.48;gateA= magnLocked||onPlate;gate1.position.y+=( (gateA?1.25:.42)-gate1.position.y)*Math.min(1,dt*9);
+if(Math.hypot(light.x-1.78,light.z)<.43)gateTime=8.0;else gateTime=Math.max(0,gateTime-dt);gate2.position.y+=((gateTime>0?1.25:.42)-gate2.position.y)*Math.min(1,dt*9);
+let brake=(brakeDown||K(' '))&&brakeEnergy>0;if(brake)brakeEnergy=Math.max(0,brakeEnergy-26*dt);else brakeEnergy=Math.min(100,brakeEnergy+9*dt);
+for(const b of balls){if(b===heavy&&magnLocked){b.x=-3.28;b.z=.10;b.vx=b.vz=0;continue}
+ const gain=b.mass>2?20:25;b.vx+=tiltX*gain*dt;b.vz+=tiltZ*gain*dt;let drag=Math.exp(-(b.mass>2?.77:.57)*dt-(brake?5.3*dt:0));b.vx*=drag;b.vz*=drag;
+ const sp=Math.hypot(b.vx,b.vz),max=b.mass>2?4.2:5.4;if(sp>max){b.vx*=max/sp;b.vz*=max/sp}b.x+=b.vx*dt;b.z+=b.vz*dt;
+ for(const w of walls)collideWall(b,w);
+ if(!gateA)collideWall(b,{x1:-1.82,z1:-.66,x2:-1.82,z2:.66,r:.15});
+ if(gateTime<=0)collideWall(b,{x1:2.48,z1:-.68,x2:2.48,z2:.68,r:.14});
+ // The rotating engine agitator transfers tangential momentum to the balls.
+ const a=-spinner.rotation.y,c=Math.cos(a),s=Math.sin(a),wx=-.65*c,wz=-.65*s,ex=.65*c,ez=.65*s;
+ const hdx=ex-wx,hdz=ez-wz,clamp=Math.max(0,Math.min(1,((b.x-wx)*hdx+(b.z-wz)*hdz)/(hdx*hdx+hdz*hdz)));
+ const px=wx+clamp*hdx,pz=wz+clamp*hdz;
+ const tangX=1.38*pz,tangZ=-1.38*px;
+ collideWall(b,{x1:wx,z1:wz,x2:ex,z2:ez,r:.095},tangX,tangZ);
+ // Falling means the ball has lost support of the moving bridge.
+ if(Math.abs(b.x)<1.22&&Math.abs(b.z)<.98){const supported=brOpen&&Math.abs(b.z)<.345;if(!supported) {respawn(b);continue}}
+ // Collisions between moving gate sliders when not fully retracted.
+ if(gateA&&gate1.position.y<.76&&b.x>-2.05&&b.x<-1.5&&Math.abs(b.z)<.7)collideWall(b,{x1:-1.82,z1:-.66,x2:-1.82,z2:.66,r:.15});
+ if(gateTime>0&&gate2.position.y<.76&&b.x>2.2&&b.x<2.75&&Math.abs(b.z)<.7)collideWall(b,{x1:2.48,z1:-.68,x2:2.48,z2:.68,r:.14});
+ }
+ collideBalls(heavy,light);
+ if(Math.hypot(light.x-4.36,light.z)<.35&&!won){won=true;$('#win').style.display='flex';$('#winData').textContent=`Tiempo: ${String(Math.floor(runTime/60)).padStart(2,'0')}:${String(Math.floor(runTime%60)).padStart(2,'0')} · Caídas: ${falls}. Has sincronizado retención magnética, gravedad, transmisión mecánica y temporizador de descarga.`;toast('SISTEMA DESBLOQUEADO')}
+ // avoid shifting either ball into the unsupported pit during ball-ball collision
+ for(const b of balls){if(Math.abs(b.x)<1.22&&Math.abs(b.z)<.98&&!(brOpen&&Math.abs(b.z)<.345)){respawn(b)}}
+}
+function cameraUpdate(){let aspect=vp.clientWidth/Math.max(1,vp.clientHeight);let w=12.5,h=10.0;h=Math.max(h,w/aspect);w=h*aspect;camera.left=-w/2;camera.right=w/2;camera.top=h/2;camera.bottom=-h/2;camera.position.set(0,viewTop?18:13,viewTop?.01:12);camera.lookAt(0,0,0);camera.updateProjectionMatrix();renderer.setSize(vp.clientWidth,vp.clientHeight,false)}
+new ResizeObserver(cameraUpdate).observe(vp);cameraUpdate();
+let last=performance.now(),acc=0,uiLast=0;
+function frame(time){requestAnimationFrame(frame);let d=Math.min(.05,(time-last)/1000);last=time;acc+=d;const dt=1/120;let n=0;while(acc>=dt&&n<7){if(!won)step(dt);acc-=dt;n++}
+for(const b of balls){b.mesh.position.set(b.x,b.r+.065,b.z);const velocity=Math.hypot(b.vx,b.vz);if(velocity>.1){const axis=new THREE.Vector3(b.vz,0,-b.vx).normalize();b.mesh.rotateOnWorldAxis(axis,Math.min(.14,velocity*d/b.r))}}
+magnetRing.material=magnLocked?green:blue;padB.material=gateTime>0?green:gold;exit.material=gateTime>0?green:blue;
+const chargePct=Math.round(brakeEnergy);$('#brakefill').style.width=chargePct+'%';if(time-uiLast>150){uiLast=time;const stage1=gateA,stage2=Math.abs(bridgeAngle)<.16,stage3=gateTime>0;$('#pA').classList.toggle('on',stage1);$('#pB').classList.toggle('on',stage2);$('#pC').classList.toggle('on',stage3);$('#pC').classList.toggle('warn',!stage3);$('#magnet').classList.toggle('hot',magnLocked);$('#bridge').classList.toggle('hot',bridgeTarget);
+ hud.innerHTML=`<b>RETENCIÓN</b> ${magnLocked?'FIJADA':gateA?'CONTACTO SIN FIJAR':'DESACTIVADA'}\n<b>PASARELA</b> ${stage2?'ALINEADA':bridgeTarget?'GIRANDO':'REPLEGADA'}\n<b>DESCARGA</b> ${gateTime>0?gateTime.toFixed(1)+' s':'SIN CARGA'}\n<b>FRENO</b> ${chargePct}%`;
+ rightHud.textContent=`${String(Math.floor(runTime/60)).padStart(2,'0')}:${String(Math.floor(runTime%60)).padStart(2,'0')} · CAÍDAS ${falls}`}
+ renderer.render(scene,camera)}
+reset();requestAnimationFrame(frame);
+</script>
+</body>
+</html>
